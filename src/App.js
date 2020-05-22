@@ -143,7 +143,6 @@ function App() {
             {/* <CodeMirror style={{ flex: 1, border: "1px solid black", overflowX: "hidden" }} /> */}
             <SandpackConsumer>
               {sandpack => {
-                console.log(sandpack)
                 return <CodeEditor sandpack={sandpack} />;
               }}
             </SandpackConsumer>
