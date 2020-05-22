@@ -8,6 +8,8 @@ import {
   SandpackConsumer
 } from "react-smooshpack/es/components"
 import "react-smooshpack/dist/styles.css"
+import CodeEditor from './components/CodeEditor';
+
 
 const files = {
   "/index.js": {
@@ -138,7 +140,13 @@ function App() {
           }}
           >
             <FileExplorer style={{ width: "180px", border: "1px solid black" }} />
-            <CodeMirror style={{ flex: 1, border: "1px solid black", overflowX: "hidden" }} />
+            {/* <CodeMirror style={{ flex: 1, border: "1px solid black", overflowX: "hidden" }} /> */}
+            <SandpackConsumer>
+              {sandpack => {
+                console.log(sandpack)
+                return <CodeEditor sandpack={sandpack} />;
+              }}
+            </SandpackConsumer>
             <BrowserPreview style={{ flex: 1, border: "1px solid black", overflowX: "hidden" }} />
           </div>
       </SandpackProvider>
