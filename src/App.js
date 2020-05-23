@@ -139,7 +139,6 @@ function App() {
           }}
           >
             <FileExplorer style={{ width: "180px", border: "1px solid black" }} />
-            {/* <CodeMirror style={{ flex: 1, border: "1px solid black", overflowX: "hidden" }} /> */}
             <SandpackConsumer>
               {sandpack => {
                 return <CodeEditor sandpack={sandpack} />;

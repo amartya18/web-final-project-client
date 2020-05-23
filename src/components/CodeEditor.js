@@ -25,13 +25,21 @@ const CodeEditor = ({ sandpack }) => {
     const file = (openedPath.replace('/', '').split('.').pop());
     return languages[file];
   };
-  const onChange = (newValue, e) => {
-    console.log('onChange', newValue, e);
-    console.log(languages[openedPath]);
+  const onChange = (newValue, e, file) => {
+    // e is an array
+    // console.log('onChange', newValue, e);
+    console.log('onChange', newValue);
+    sandpack.updateFiles({
+      ...sandpack.files,
+      [sandpack.openedPath]: {
+        code: newValue,
+      },
+    });
   };
   const editorDidMount = (editor, monaco) => {
-    console.log('editorDidMount', editor);
-    editor.focus();
+    // console.log('editorDidMount', editor);
+    // editor.focus();
+    console.log(sandpack);
   };
 
   return (
