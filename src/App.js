@@ -2,7 +2,6 @@ import React from 'react';
 import './App.css';
 import {
   FileExplorer,
-  CodeMirror,
   BrowserPreview,
   SandpackProvider,
   SandpackConsumer
