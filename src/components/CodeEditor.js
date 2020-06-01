@@ -19,7 +19,7 @@ const CodeEditor = ({ sandpack }) => {
     selectOnLineNumber: true,
   };
   const fileOpened = (files) => {
-    return files[openedPath].code
+    return files[openedPath].code;
   };
   const fileLanguage = (openedPath) => {
     const file = (openedPath.replace('/', '').split('.').pop());

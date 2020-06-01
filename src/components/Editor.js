@@ -8,13 +8,13 @@ import {
 } from "react-smooshpack/es/components"
 import "react-smooshpack/dist/styles.css"
 import Navbar from './Navbar'
-import CodeEditor from './components/CodeEditor';
+import CodeEditor from './CodeEditor';
 
 
 
 function Editor(props) {
 
-  const [files,setFiles]=useState({});
+  const [files, setFiles] = useState({});
 
   function getFile(content){
     const dic={};
@@ -48,7 +48,7 @@ function Editor(props) {
 },[]);
       
       const dependencies = {
-        react: "latest",
+        "react": "latest",
         "react-dom": "latest"
       };
   return (
@@ -59,8 +59,8 @@ function Editor(props) {
         :
       <SandpackProvider
         files={files}
-        dependencies={dependencies}
-        entry="/index.html"
+        dependencies={files["/package.json"].code}
+        entry="/src/index.js"
         showOpenInCodeSandbox={false}
         style={{
           width: "100%",
@@ -75,7 +75,11 @@ function Editor(props) {
           }}
           >
             <FileExplorer style={{ width: "180px", border: "1px solid black", resize:"horizontal",width:"unset", minWidth:"180px"}} />
-            <CodeEditor style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"both"}} />
+            <SandpackConsumer>
+              {sandpack => {
+                return <CodeEditor sandpack={sandpack} style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"both"}} />
+              }}
+            </SandpackConsumer>
             <BrowserPreview style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"horizontal",width:"unset", minWidth:"180px"}} />
           </div>
       </SandpackProvider>
