@@ -7,7 +7,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
+.CodeMirror {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+iframe{
+  height:100vh !important ;
+}
+.sandpack-CodeMirror__container {
+  resize: horizontal;
+  overflow: auto;
+  width: 100px !important;
+  min-width: 100px;
+
 }

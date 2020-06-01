@@ -1,153 +1,71 @@
-import React from 'react';
-import './App.css';
-import {
-  FileExplorer,
-  BrowserPreview,
-  SandpackProvider,
-  SandpackConsumer
-} from "react-smooshpack/es/components"
-import "react-smooshpack/dist/styles.css"
-import CodeEditor from './components/CodeEditor';
-
-
-const files = {
-  "/index.js": {
-    code: `\
-import React from "react";
-import { render } from "react-dom";
-import './styles.css'
-
-import { UserList } from './components/UserList.js'
-
-const getUrl = userCount => \`https://randomuser.me/api/?results=\${userCount}\`;
+import React, { useState, useEffect } from 'react';
+import {BrowserRouter as Router, Switch, Route,Redirect} from 'react-router-dom';
+import './stylesheet/App.css';
+import Editor from './components/Editor';
+import Navbar from './components/Navbar';
+import Home from './components/Home';
+import Logout from './components/Logout'
+import Login from './components/Login';
+import Register from './components/Register';
+import Upload from './components/Upload';
+import Create from './components/Create'
+import Auth from './components/Auth';
 
 function App() {
-  const [userCount, setUserCount] = React.useState(5);
-  const [users, setUsers] = React.useState([]);
 
-  React.useEffect(() => {
-    fetch(getUrl(userCount))
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data.results)
-      });
-  }, [userCount])
+  const auth = new Auth();
 
-
-
-  return (
-    <div className="app">
-      <h1 className="title">Hello from React App</h1>
-      <button type="button" onClick={() => setUserCount(userCount + 1)}>Get more users</button>
-      <UserList users={users}/>
-    </div>
-  );
-}
-
-render(<App />, document.getElementById("react-app"));`
-  },
-  "/components/UserList.js": {
-    code: `\
-import React from "react";
-
-function UserList({ users }) {
-  return (
-    <div style={{ background: '#eee', padding: 5, fontSize: '18px' }}>
-      <p style={{marginBottom: 20 }}>Hello from the child component.</p>
-      <p>Fetched <b>{users.length}</b> users from API:</p>
-      <ul>
-      {users.map((user) => (
-        <li key={user.email}>
-          <div style={{display: 'flex', alignItems: "center", height: 40 }}>
-            <p style={{display: 'inline-block' }}>{user.name.first} {user.name.last}</p>
-            <img style={{ width: 30, marginLeft: 10 }} src={user.picture.thumbnail} alt="User profile" />
-          </div>
-        </li>
-        )
-      )}
-      </ul>
-    </div>
-  );
-}
-
-export { UserList }`
-  },
-  "/styles.css": {
-    code: `\
-body, h1, h2, h3, p {
-  margin: 0;
-}
-.app > * {
-  margin-bottom: 10px;
-}
-.title {
-  color: #4e486c;
-}
-button {
-  width: 100%;
-  background-color: #4e486c;
-  font-weight: bold;
-  color: white;
-  padding: 15px 32px;
-  font-size: 18px;
-  cursor: pointer;
-}
-`
-  },
-  "/public/index.html": {
-    code: `\
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>App</title>
-</head>
-<body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="react-app"></div>
-</body>
-</html>
-`
+  function handleSucessfulAuth(data){
+    auth.setToken(data.token);
+    auth.setUserId(data.id);
+    auth.authenticate();
   }
-};
+  function handleLogOut(){
+    auth.signout();
+    console.log("been here");
 
-const dependencies = {
-  react: "latest",
-  "react-dom": "latest"
-};
+  }
 
-function App() {
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: 50}}>
-      <SandpackProvider
-        files={files}
-        dependencies={dependencies}
-        entry="/index.js"
-        showOpenInCodeSandbox={false}
-        style={{
-          width: "100%",
-          maxWidth: 1800
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            height: "100%",
-            border: "1px solid black"
-          }}
-          >
-            <FileExplorer style={{ width: "180px", border: "1px solid black" }} />
-            <SandpackConsumer>
-              {sandpack => {
-                return <CodeEditor sandpack={sandpack} />;
-              }}
-            </SandpackConsumer>
-            <BrowserPreview style={{ flex: 1, border: "1px solid black", overflowX: "hidden" }} />
-          </div>
-      </SandpackProvider>
-    </div>
+    <Router>
+      <Switch>
+        <Route 
+          path ="/" 
+          exact
+          render={props=> auth.getAuth()? 
+            <Home {...props} activeLink="Home" token={auth.getAuthToken()}/>
+            :<Redirect to={{pathname:"/login"}}/>} 
+          />
+        <Route 
+        path ="/login"
+        render={props=>(
+          <Login {...props} loggedInStatus={auth.getAuthToString()} handleSucessfulAuth={handleSucessfulAuth}/>
+        )} />
+         <Route 
+        path ="/logout"
+        render={props=>(
+         <Logout {...props} handleLogOut={handleLogOut}/>
+        )} />
+        <Route path ="/register">
+          <Register/>
+        </Route>
+        <Route path ="/project/:owner_id/:id"
+          render={props=>auth.getAuth()?
+            <Editor {...props} token={auth.getAuthToken()}/>
+            :<Redirect to={{pathname:"/login"}}/>}/>
+        <Route
+          path ="/create"
+          render ={props=>(
+            <Create activeLink="Create" {...props}/>
+          )}/>
+        <Route
+          path ="/profile"
+          render ={props=>(
+            <Create activeLink="Profile" {...props}/>
+          )}/>
+      </Switch>
+
+    </Router>
   );
 }
 
