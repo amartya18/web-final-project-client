@@ -45,7 +45,7 @@ const CodeEditor = ({ sandpack }) => {
   return (
     <MonacoEditor
       width="800"
-      height="600"
+      height="100%"
       language={fileLanguage(openedPath)}
       theme="vs-dark"
       value={fileOpened(files)}

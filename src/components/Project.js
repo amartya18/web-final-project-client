@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProjectList from './ProjectList'
 import Navbar from './Navbar';
 
-function Home(props){
+function Project(props){
     const [load,setLoad]=useState(false);
     const [projects,setProjects]= useState();
 
@@ -27,11 +27,11 @@ function Home(props){
                 <h1 className="text-center p-4">My fucking projects</h1>
                 {!load 
                 ? <div>Loading...</div> 
-                :<ProjectList projects= {projects.projects}/>}  
+                :<ProjectList {...props} projects= {projects.projects}/>}  
 
         </div>
        </div>
     );
 }
 
-export default Home;
+export default Project;

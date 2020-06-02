@@ -3,7 +3,6 @@ import { Button, FormGroup, FormControl} from "react-bootstrap";
 
 
 function ChooseProjectForm(props){
-    console.log(props);
     const [title,setTitle]= useState("");
     const [description,setDescription]= useState("");
 

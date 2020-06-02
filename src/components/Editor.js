@@ -53,7 +53,7 @@ function Editor(props) {
         "react-dom": "latest"
       };
   return (
-    <div style={{ display: "block ", height: "100vh",width:"100vw"}}>
+    <div style={{ display: "block ", height: "100vh",width:"100vw", overflow:"hidden"}}>
       <Navbar {...props}/>
       {isEmpty(files) 
         ? <div>loading...</div>
@@ -61,7 +61,7 @@ function Editor(props) {
       <SandpackProvider
         files={files}
         dependencies={files["/package.json"].code}
-        entry="/index.js"
+        entry="/src/index.js"
         showOpenInCodeSandbox={false}
         style={{
           width: "100%",

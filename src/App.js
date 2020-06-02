@@ -22,7 +22,6 @@ function App() {
   }
   function handleLogOut(){
     auth.signout();
-    console.log("been here");
 
   }
 
