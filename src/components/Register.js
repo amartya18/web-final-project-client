@@ -1,14 +1,25 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormControl} from "react-bootstrap";
 import "../stylesheet/login.css";
+import $ from 'jquery'
 
-export default function Register() {
+export default function Register(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVerify, setPasswordVerify]=useState("");
   const [name,setName]= useState("");
+  const [valid,setValid]= useState(false);
 
   function validateForm() {
     return name.length> 0 && email.length > 0 && password.length > 0;
+  }
+  function checkPassword(passwordV){
+    setPasswordVerify(passwordV)
+    $('#passwordVerify').addClass('redBorder');
+    if (passwordV=== password ){
+      setValid(true);
+      $('#passwordVerify').removeClass('redBorder');
+    }
   }
 
   async function handleSubmit (event){
@@ -20,7 +31,17 @@ export default function Register() {
     };
     const response = await fetch('http://localhost:8000/api/user/register', requestOptions);
     const data = await response.json();
+    try{
+      if (data.status==='success'){
+        props.history.push('/login');
+      }
+  }catch(err){
+    console.log(err);
   }
+
+
+  }
+
 
   return (
     <div className="container-fluid height-max">
@@ -59,8 +80,17 @@ export default function Register() {
                   type="password"
                 />
               </FormGroup>
+              <FormGroup controlId="passwordVerify">
+                Verify Your Password
+                <FormControl
+                  className='redBorder'
+                  value={passwordVerify}
+                  onChange={e => checkPassword(e.target.value)}
+                  type="password"
+                />
+              </FormGroup>
               <Button block disabled={!validateForm()} type="submit">
-                Login
+                Register Now
               </Button>
             </form>
 
