@@ -47,6 +47,7 @@ function Editor(props) {
     }fetchData();
 },[]);
       
+  
       const dependencies = {
         "react": "latest",
         "react-dom": "latest"
@@ -60,7 +61,7 @@ function Editor(props) {
       <SandpackProvider
         files={files}
         dependencies={files["/package.json"].code}
-        entry="/src/index.js"
+        entry="/index.js"
         showOpenInCodeSandbox={false}
         style={{
           width: "100%",

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {BrowserRouter as Router, Switch, Route,Redirect} from 'react-router-dom';
 import Editor from './components/Editor';
 import Navbar from './components/Navbar';
-import Home from './components/Home';
+import Project from './components/Project';
 import Logout from './components/Logout'
 import Login from './components/Login';
 import Register from './components/Register';
 import Upload from './components/Upload';
 import Create from './components/Create'
+import Profile from './components/Profile'
 import Auth from './components/Auth';
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
           path ="/" 
           exact
           render={props=> auth.getAuth()? 
-            <Home {...props} activeLink="Home" token={auth.getAuthToken()}/>
+            <Project {...props} activeLink="project" token={auth.getAuthToken()}/>
             :<Redirect to={{pathname:"/login"}}/>} 
           />
         <Route 
@@ -54,14 +55,17 @@ function App() {
             :<Redirect to={{pathname:"/login"}}/>}/>
         <Route
           path ="/create"
-          render ={props=>(
-            <Create activeLink="Create" {...props}/>
+          render ={props=>(auth.getAuth()? 
+            <Create {...props} activeLink="create" token={auth.getAuthToken()}/>
+            : <Redirect to={{pathname:"/login"}}/>
           )}/>
         <Route
           path ="/profile"
-          render ={props=>(
-            <Create activeLink="Profile" {...props}/>
-          )}/>
+          render ={props=>(auth.getAuth()? 
+            <Profile {...props} activeLink="profile" token={auth.getAuthToken()}/>
+            : <Redirect to={{pathname:"/login"}}/>
+            )}
+          />
       </Switch>
 
     </Router>
