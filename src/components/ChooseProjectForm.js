@@ -19,8 +19,8 @@ function ChooseProjectForm(props){
         const response = await fetch('http://localhost:8000/api/project/create', requestOptions);
         const data = await response.json();
         try{
-            if (data.status==='success'){
-                props.history.push(`/project/${data.owner_id}/${data._id}`);
+            if (data.status==200){
+                props.history.push(`/project/${data._id}`);
             }else{
                 console.log("Failed to create");
             }

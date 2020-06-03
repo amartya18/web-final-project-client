@@ -52,7 +52,7 @@ function DetailView(props){
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Edit</button>
-                        <button type="button" onClick={closeModal} className="btn btn-primary"><Link to={`/project/${detailData.owner_id}/${detailData._id}`}>Open in Editor</Link></button>
+                        <button type="button" onClick={closeModal} className="btn btn-primary"><Link to={`/project/${detailData._id}`}>Open in Editor</Link></button>
                     </div>
                  </div>
             </div>

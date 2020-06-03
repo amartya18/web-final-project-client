@@ -15,11 +15,12 @@ import CodeEditor from './CodeEditor';
 function Editor(props) {
 
   const [files, setFiles] = useState({});
+  const [projectType,setProjectType]=useState("");
 
   function getFile(content){
     const dic={};
     for(let i =0; i<content.length;i++){
-      dic['/'+content[i].filename] = {code:content[i].body};
+      dic[content[i].filename] = {code:content[i].code};
     }
     setFiles(dic);
   }
@@ -36,32 +37,28 @@ function Editor(props) {
   useEffect(()=>{
     async function fetchData(){
         const requestOptions = {
-        method: 'POST',
+        method: 'GET',
         headers: { 'Content-Type': 'application/json', 
-                    'auth-token': props.token},
-        body: JSON.stringify({ _id: props.match.params.id, owner_id:props.match.params.owner_id})   
+                    'auth-token': props.token}
         };
-        const response = await fetch('http://localhost:8000/api/project/read', requestOptions);
+        const response = await fetch(`http://localhost:8000/api/project/read/${props.match.params.id}`, requestOptions);
         const data = await response.json();
-        getFile(data.content);
+        getFile(data.source);
+        setProjectType(data.projectType);
     }fetchData();
 },[]);
       
   
-      const dependencies = {
-        "react": "latest",
-        "react-dom": "latest"
-      };
   return (
     <div style={{ display: "block ", height: "100vh",width:"100vw", overflow:"hidden"}}>
       <Navbar {...props}/>
-      {isEmpty(files) 
+      {isEmpty(files)
         ? <div>loading...</div>
         :
       <SandpackProvider
         files={files}
         dependencies={files["/package.json"].code}
-        entry="/src/index.js"
+        entry="/package.json"
         showOpenInCodeSandbox={false}
         style={{
           width: "100%",
