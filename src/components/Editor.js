@@ -9,20 +9,37 @@ import {
 import "react-smooshpack/dist/styles.css"
 import Navbar from './Navbar'
 import CodeEditor from './CodeEditor';
+import axios from 'axios';
+import FileExplorerHeader from './FileExplorerHeader'
 
 
 
 function Editor(props) {
 
   const [files, setFiles] = useState({});
-  const [projectType,setProjectType]=useState("");
+  const [projectEntry,setProjectEntry]=useState(null);
 
   function getFile(content){
     const dic={};
     for(let i =0; i<content.length;i++){
+      try{
       dic[content[i].filename] = {code:content[i].code};
+      }catch(err){
+        dic[content[i].filename] = {code:''};
+
+      }
+      
     }
-    setFiles(dic);
+    setFiles(dic);    
+  }
+
+  function projectEntryList(projectType){
+    if (projectType==="vanilla"){
+      setProjectEntry("/index.js");
+    }else{
+      setProjectEntry("/src/index.js");
+    }
+
   }
 
   function isEmpty(obj){
@@ -33,32 +50,47 @@ function Editor(props) {
 
   return true;
   }
+  function refetch(){
+    // setFiles({});
+    fetchData();
+  }
 
+  async function fetchData(){
+    const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', 
+                'auth-token': props.token}
+    };
+    try{
+      const response = await axios(`http://localhost:8000/api/project/read/${props.match.params.id}`, requestOptions)
+      projectEntryList(response.data.projectType);
+      getFile(response.data.source);
+    }catch(err){
+      console.log(err);
+    //   if (err.response.status==401){
+    //     props.history.push('/')
+    //   }else if (err.response.status==403) props.history.push('/login');
+    // else{
+    //   console.log(err);
+    //   props.history.push('/');
+    // }
+  }
+}
   useEffect(()=>{
-    async function fetchData(){
-        const requestOptions = {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 
-                    'auth-token': props.token}
-        };
-        const response = await fetch(`http://localhost:8000/api/project/read/${props.match.params.id}`, requestOptions);
-        const data = await response.json();
-        getFile(data.source);
-        setProjectType(data.projectType);
-    }fetchData();
+fetchData();
+    
 },[]);
       
   
   return (
     <div style={{ display: "block ", height: "100vh",width:"100vw", overflow:"hidden"}}>
       <Navbar {...props}/>
-      {isEmpty(files)
-        ? <div>loading...</div>
-        :
-      <SandpackProvider
+      {(isEmpty(files) || !projectEntry)
+        ?<div>loading...</div>
+      :<SandpackProvider
         files={files}
         dependencies={files["/package.json"].code}
-        entry="/package.json"
+        entry={projectEntry}
         showOpenInCodeSandbox={false}
         style={{
           width: "100%",
@@ -72,7 +104,15 @@ function Editor(props) {
             border: "1px solid black"
           }}
           >
-            <FileExplorer style={{ width: "180px", border: "1px solid black", resize:"horizontal",width:"unset", minWidth:"180px"}} />
+            <div>
+              <SandpackConsumer>
+                {sandpack=>{
+                  return <FileExplorerHeader {...props} sandpack={sandpack} refetch={refetch} projectId={props.match.params.id}/>
+                }}
+              </SandpackConsumer>
+            <FileExplorer style={{ width: "180px", resize:"horizontal",width:"unset", minWidth:"180px", height:"100%"}}>
+              </FileExplorer>
+            </div>
             <SandpackConsumer>
               {sandpack => {
                 return <CodeEditor sandpack={sandpack} style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"both"}} />

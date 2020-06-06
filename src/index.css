@@ -27,3 +27,40 @@ iframe{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   cursor:pointer;
 }
+
+a{
+  text-decoration: none;
+}
+.text-white{
+  color:white
+}
+.file_icons>i{
+  font-size: 15px;
+  cursor: pointer;
+}
+.tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+.file_icons>i:hover .tooltiptext {
+  visibility: visible;
+}
+.blending_input{
+  background-color: #3a4042;
+  color: white;
+  border-radius: 3px;
+  border: white 1px solid;
+  width:140px;
+}
+.pl-35{
+  padding-left: 1em;
+}

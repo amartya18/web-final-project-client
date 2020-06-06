@@ -1,6 +1,8 @@
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
+
+
 const CodeEditor = ({ sandpack }) => {
   // not sure if this is how to do it properly
   const { files, openedPath } = sandpack;
@@ -19,6 +21,7 @@ const CodeEditor = ({ sandpack }) => {
     selectOnLineNumber: true,
   };
   const fileOpened = (files) => {
+    console.log(openedPath);
     return files[openedPath].code;
   };
   const fileLanguage = (openedPath) => {
@@ -28,7 +31,6 @@ const CodeEditor = ({ sandpack }) => {
   const onChange = (newValue, e, file) => {
     // e is an array
     // console.log('onChange', newValue, e);
-    console.log('onChange', newValue);
     sandpack.updateFiles({
       ...sandpack.files,
       [sandpack.openedPath]: {
@@ -39,7 +41,6 @@ const CodeEditor = ({ sandpack }) => {
   const editorDidMount = (editor, monaco) => {
     // console.log('editorDidMount', editor);
     // editor.focus();
-    console.log(sandpack);
   };
 
   return (

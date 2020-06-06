@@ -48,7 +48,7 @@ function App() {
         <Route path ="/register">
           <Register/>
         </Route>
-        <Route path ="/project/:id"
+        <Route path ="/project/:id/"
           render={props=>auth.getAuth()?
             <Editor {...props} token={auth.getAuthToken()}/>
             :<Redirect to={{pathname:"/login"}}/>}/>
