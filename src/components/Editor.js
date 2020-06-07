@@ -12,12 +12,44 @@ import CodeEditor from './CodeEditor';
 import axios from 'axios';
 import FileExplorerHeader from './FileExplorerHeader'
 
-
+// const connection =  require('./sharedb/connection');
+import connection from './sharedb/connection';
 
 function Editor(props) {
 
   const [files, setFiles] = useState({});
-  const [projectEntry,setProjectEntry]=useState(null);
+  const [projectEntry, setProjectEntry] = useState(null);
+  // const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    // fetchData();
+    // console.log('mounted!'); // when a user changes/delete a file or write/delete on a file
+    var doc = connection.get('x', 'y');
+    doc.subscribe();
+    doc.on('op', function() {
+      console.log('UPDATE!!!');
+    });
+    console.log(doc.data);
+
+    // doc.subscribe(function(err) {
+    //   if (err) throw err;
+    // });
+    // console.log(doc.data);
+    // var doc = connection.get('examples', 'projectId'); // change channel and id in the future
+  //   doc.subscribe(function(err) {
+  //     if (err) throw err;
+  //   });
+
+  //   // doc.on('load', update); // first snapshot
+  //   doc.on('op', update);
+  //   function update() {
+  //     setValue(value => ++value); //updates component every doc update
+  //     console.log('doc updated!');
+  //   }
+
+  //   // connection.get 
+  //   // before submitOp, fetch/subscribe
+  }, []);
 
   function getFile(content){
     const dic={};
@@ -76,10 +108,6 @@ function Editor(props) {
     // }
   }
 }
-  useEffect(()=>{
-fetchData();
-    
-},[]);
       
   
   return (

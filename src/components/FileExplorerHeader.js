@@ -15,6 +15,7 @@ function FileExplorerHeader(props){
         open ? setOpen(false) : setOpen(true);
     }
     async function handleDelete (event){
+      // everytime file is deleted open index.js
         event.preventDefault();
         const requestOptions = {
           method: 'POST',
