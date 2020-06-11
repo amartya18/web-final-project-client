@@ -21,7 +21,6 @@ const CodeEditor = ({ sandpack }) => {
     selectOnLineNumber: true,
   };
   const fileOpened = (files) => {
-    console.log(openedPath);
     return files[openedPath].code;
   };
   const fileLanguage = (openedPath) => {

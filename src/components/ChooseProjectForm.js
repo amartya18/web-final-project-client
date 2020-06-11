@@ -20,7 +20,7 @@ function ChooseProjectForm(props){
         const data = await response.json();
         try{
             console.log(data);
-            if (data.status==200){
+            if (data.status===200){
                 props.history.push(`/project/${data.project._id}`);
             }else{
                 console.log("Failed to create");

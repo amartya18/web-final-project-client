@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormControl} from "react-bootstrap";
+import {Link} from 'react-router-dom';
 import "../stylesheet/login.css";
 
 export default function Login(props) {
@@ -81,6 +82,7 @@ export default function Login(props) {
                 Login
               </Button>
             </form>
+            <p><small>Doesn't have an account? <Link to ="/register">Register here</Link></small></p>
         </div>
       </div>
       </div>

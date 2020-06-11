@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormControl} from "react-bootstrap";
 import "../stylesheet/login.css";
-import $ from 'jquery'
+import {Link} from 'react-router-dom';
+import $ from 'jquery';
 
 export default function Register(props) {
   const [email, setEmail] = useState("");
@@ -31,12 +32,20 @@ export default function Register(props) {
     };
     const response = await fetch('http://localhost:8000/api/user/register', requestOptions);
     const data = await response.json();
+    console.log(data);
+
     try{
       if (data.status==='success'){
         props.history.push('/login');
       }
+        else{
+          console.log("error else");
+          alert(data);
+        }
+      
   }catch(err){
-    console.log(err);
+    console.log("error catch");
+    alert(err);
   }
 
 
@@ -93,6 +102,8 @@ export default function Register(props) {
                 Register Now
               </Button>
             </form>
+            <p><small>Already have an account? <Link to ="/login">Click here</Link> to login</small></p>
+
 
         </div>
       </div>

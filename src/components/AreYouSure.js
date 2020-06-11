@@ -28,7 +28,7 @@ function AreYouSure(props){
 
     
     return(
-        <div className="modal fade show" id="modal-sure" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-modal="true">
+        <div className="modal fade show" id="modal-sure" tabIndex="-1" role="dialog" data-backdrop="static" aria-labelledby="exampleModalLabel" aria-modal="true">
             <div className="modal-dialog modal-dialog-centered" role="document">
  
                 <div className="modal-content">

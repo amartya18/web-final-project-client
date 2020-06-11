@@ -26,7 +26,7 @@ function ProjectList(props){
                 <img className="card-img-top" src={`${project.projectType}.png`} alt="Card image cap"/>
                 <div className="card-body">
                     <h5 className="card-title">{project.title}</h5>
-                    <p className="card-text">{project.description}</p>
+                    <p className="card-text text-truncate" style={{maxHeight:"150px"}}>{project.description}</p>
                     <p className="card-text"><small className="text-muted">Last Updated {project.last_updated}</small></p>
                     <button type="button" className="btn btn-primary "onClick={e=>handleClick(project._id)}> click me</button>
                 </div>

@@ -50,8 +50,9 @@ function Editor(props) {
 
   return true;
   }
-  function refetch(){
-    // setFiles({});
+  function refetch(openedPath){
+    const temp=files;
+    delete temp[openedPath];
     fetchData();
   }
 
@@ -66,14 +67,12 @@ function Editor(props) {
       projectEntryList(response.data.projectType);
       getFile(response.data.source);
     }catch(err){
-      console.log(err);
-    //   if (err.response.status==401){
-    //     props.history.push('/')
-    //   }else if (err.response.status==403) props.history.push('/login');
-    // else{
-    //   console.log(err);
-    //   props.history.push('/');
-    // }
+      if (err.response.status==401){
+        props.history.push('/')
+      }else if (err.response.status==403) props.history.push('/login');
+    else{
+      props.history.push('/');
+    }
   }
 }
   useEffect(()=>{
