@@ -4,7 +4,7 @@ import Editor from './components/Editor';
 import Navbar from './components/Navbar';
 import Project from './components/Project';
 import Logout from './components/Logout'
-import Login from './components/Login';
+import Login from './components/Login/Login';
 import Register from './components/Register';
 import Upload from './components/Upload';
 import Create from './components/Create'
