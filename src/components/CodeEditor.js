@@ -1,7 +1,11 @@
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
+import ReconnectingWebSocket from 'reconnecting-websocket';
+import sharedb from 'sharedb/lib/client';
 
+const socket = new ReconnectingWebSocket('ws://localhost:8000');
+const connection = new sharedb.Connection(socket);
 
 const CodeEditor = ({ sandpack }) => {
   // not sure if this is how to do it properly
@@ -40,6 +44,19 @@ const CodeEditor = ({ sandpack }) => {
   const editorDidMount = (editor, monaco) => {
     // console.log('editorDidMount', editor);
     // editor.focus();
+
+    // sandpack.files if there is operation change
+    var query = connection.createSubscribeQuery('project', function(err, results) {
+      if (err) throw err;
+      console.log(results);
+    });
+
+    query.on('ready', update);
+    query.on('changed', update);
+
+    function update() {
+      sandpack.updateFiles(query.results);
+    }
   };
 
   return (
