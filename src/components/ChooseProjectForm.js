@@ -16,17 +16,12 @@ function ChooseProjectForm(props){
                                 description :description, 
                                 projectType:props.projectType})
         };
-        const response = await fetch('http://localhost:8000/api/project/create', requestOptions);
+        const response = await fetch('http://localhost:9000/api/project/create', requestOptions);
         const data = await response.json();
-        try{
-            console.log(data);
-            if (data.status===200){
-                props.history.push(`/project/${data.project._id}`);
-            }else{
-                console.log("Failed to create");
-            }
-        }catch(err){
-            console.log("Failed To create");
+        if (response.status===200){
+            props.history.push(`/project/${data.project._id}`);
+        }else{
+            console.log("Failed to create");
         }
       }
     

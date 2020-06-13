@@ -14,9 +14,9 @@ function AreYouSure(props){
         showModal();
     },[])
     
-    function handleDelete(){
+    function handleEvent(){
         setSure(true)
-        props.handleDelete(true);
+        props.handleEvent(true);
         $('#modal-sure').modal('hide');
 
     }
@@ -43,7 +43,7 @@ function AreYouSure(props){
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
-                        <button type="button" onClick={handleDelete} className="btn btn-danger">Delete</button>
+                        <button type="button" onClick={handleEvent} className="btn btn-danger">{props.command}</button>
                     </div>
                  </div>
             </div>

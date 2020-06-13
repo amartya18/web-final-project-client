@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {BrowserRouter as Router, Switch, Route,Redirect} from 'react-router-dom';
 import Editor from './components/Editor';
 import Project from './components/Project';
@@ -10,8 +10,10 @@ import Create from './components/Create'
 import Profile from './components/Profile'
 import Auth from './components/Auth';
 import Collab from './components/Collab';
-
+// import {Resizable,ResizableBox} from 'react-resizable';
+import "./stylesheet/resizable.css";
 function App() {
+
 
   const auth = new Auth();
 
@@ -22,8 +24,8 @@ function App() {
   }
   function handleLogOut(){
     auth.signout();
-
   }
+
 
   return (
     <Router>
@@ -32,7 +34,7 @@ function App() {
           path ="/" 
           exact
           render={props=> auth.getAuth()? 
-            <Project {...props} activeLink="project" token={auth.getAuthToken()}/>
+            <Project {...props} activeLink="project" user={auth.userId} handleLogOut={handleLogOut}token={auth.getAuthToken()}/>
             :<Redirect to={{pathname:"/login"}}/>} 
           />
         <Route 
@@ -53,7 +55,7 @@ function App() {
         <Route 
           path ="/project/:id/"
           render={props=>auth.getAuth()?
-            <Editor {...props} token={auth.getAuthToken()}/>
+            <Editor {...props} handleLogOut={handleLogOut} token={auth.getAuthToken()}/>
             :<Redirect to={{pathname:"/login"}}/>}/>
         <Route
           path ="/create"
@@ -71,7 +73,7 @@ function App() {
           <Route
           path ="/collab/:id/:password/"
           render ={props=>(auth.getAuth()? 
-            <Collab  {...props} token={auth.getAuthToken()}/>
+            <Collab  {...props} user={auth.userId}token={auth.getAuthToken()}/>
             : <Redirect to={{pathname:"/login"}}/>
             )}
           />

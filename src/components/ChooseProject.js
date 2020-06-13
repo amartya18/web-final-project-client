@@ -18,7 +18,7 @@ function ChooseProject(props){
             <div className="row">
                 <div className="col-lg-4">
                     <div className="card" onClick={onClickVanilla} style={{width:'100%', minHeight:'400px',overflow:'hidden'}}>
-                        <img className="card-img-top" src='vanilla.png' alt="Card image cap"/>
+                        <img className="card-img-top" src='vanilla.png' alt="Card cap"/>
                         <div className="card-body">
                             <h5 className="card-title">Vanilla JavaScript</h5>
                             <p className="card-text">Create your plain html css js now!</p>

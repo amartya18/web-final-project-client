@@ -63,13 +63,16 @@ function Editor(props) {
                 'auth-token': props.token}
     };
     try{
-      const response = await axios(`http://localhost:8000/api/project/read/${props.match.params.id}`, requestOptions)
+      const response = await axios(`http://localhost:9000/api/project/read/${props.match.params.id}`, requestOptions);
       projectEntryList(response.data.projectType);
       getFile(response.data.source);
-    }catch(err){
+    }catch(err){  
       if (err.response.status==401){
         props.history.push('/')
-      }else if (err.response.status==403) props.history.push('/login');
+      }else if (err.response.status==403){
+        props.handleLogOut('/');
+        props.history.push('/login');
+      }
     else{
       props.history.push('/');
     }

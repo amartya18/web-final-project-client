@@ -37,6 +37,7 @@ export default function Login(props) {
     };
     const response = await fetch('http://localhost:8000/api/user/login', requestOptions);
     const data = await response.json();
+    
     localStorage.setItem('login', JSON.stringify({
       login:true,
       token: data.token,

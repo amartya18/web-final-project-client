@@ -3,6 +3,7 @@ class Auth{
         const tempToken = JSON.parse(localStorage.getItem("login"));
         if (localStorage.getItem("login")){
             this.authToken=tempToken.token;
+            this.userId=tempToken.id;
             this.isAuthenticated=true;
 
         }else{
@@ -18,6 +19,7 @@ class Auth{
         this.isAuthenticated = false;
         localStorage.removeItem("login");
         this.authToken="";
+        this.userId="";
     }
     getAuth() {
         return this.isAuthenticated;

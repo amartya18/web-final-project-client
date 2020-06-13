@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
-import { Button, FormGroup, FormControl} from "react-bootstrap";
+import {FormGroup, FormControl} from "react-bootstrap";
 
 
-function UpdateProject({data,token,closeModalReload}){
+function UpdateProject({data,token,closeModalReload,collab}){
     const [useToken,setUseToken]=useState(token);
     const [dataId,setDataId]= useState(data._id);
     const [title,setTitle]=useState(data.title);
@@ -16,7 +16,7 @@ function UpdateProject({data,token,closeModalReload}){
                         'auth-token': useToken},
             body: JSON.stringify({ _id: dataId, title:title,description:description})
             };
-            const response = await fetch(`http://localhost:8000/api/project/updateProject`, requestOptions);
+            const response = await fetch(`http://localhost:9000/api/project/updateProject`, requestOptions);
             const data = await response.json();
             console.log(data);
             if (data.status==='OK'){
@@ -49,12 +49,20 @@ function UpdateProject({data,token,closeModalReload}){
                 type="text"
             />
             </FormGroup>
+            <p>Delete Collaborator</p>
+            
+                {collab.map((collabrated)=>(
+                    <div>
+                        <i className="fa fa-times" style={{color:'red'}}></i><span key ={collabrated.id}>{collabrated.email}</span>
+                    </div>
+                ))}
+            
          
         </div>
         <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" >Cancel</button>
             <FormGroup>
-                <button type="button" className="btn btn-secondary" >cancel</button>
-            <button type="submit"className="btn btn-primary">Change</button>
+                <button type="submit"className="btn btn-primary">Change</button>
             </FormGroup>
         </div>
         </form>
