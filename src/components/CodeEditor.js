@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
 import ReconnectingWebSocket from 'reconnecting-websocket';
@@ -10,6 +10,7 @@ const connection = new sharedb.Connection(socket);
 const CodeEditor = ({ sandpack }) => {
   // not sure if this is how to do it properly
   const { files, openedPath } = sandpack;
+  const editorRef = useRef();
 
   // read more about react states
   const languages = {
@@ -21,12 +22,6 @@ const CodeEditor = ({ sandpack }) => {
     "json": "json",
   };
 
-  const options = {
-    selectOnLineNumber: true,
-  };
-  const fileOpened = (files) => {
-    return files[openedPath].code;
-  };
   const fileLanguage = (openedPath) => {
     const file = (openedPath.replace('/', '').split('.').pop());
     return languages[file];
@@ -40,7 +35,14 @@ const CodeEditor = ({ sandpack }) => {
     const newText = e.changes[0].text;
     const offset = e.changes[0].rangeOffset;
 
-    const ops = [{ p: ['code', offset], si: newText }];
+    var ops = null;
+
+    if (newText !== null) {
+      ops = [{ p: ['code', offset], si: newText }];
+    } else {
+      ops = [{ p: ['code', offset], sd: '' }];
+    }
+
     const doc = connection.get('project', pathFile);
     doc.fetch(function(err){
       if (err) throw err;
@@ -61,11 +63,28 @@ const CodeEditor = ({ sandpack }) => {
   };
 
   const editorDidMount = (editor, monaco) => {
-    console.log(editor);
+    editorRef.current = editor;
+
     editor.onDidChangeCursorPosition((e) => {
       // console.log(e);
     });
     // editor.onDidChangeCursorSelection();
+
+    monaco.editor.createModel(
+      sandpack.files['/src/components/UserList.js'].code,
+      'javascript',
+      monaco.Uri.parse(`file:///UserList.js`)
+    )
+
+    monaco.editor.createModel(
+      sandpack.files['/src/index.js'].code,
+      'javascript',
+      monaco.Uri.parse(`file:///index.js`)
+    )
+
+    const temp = monaco.editor.getModel('file:///index.js');
+
+    editor.setModel(temp);
 
     editor.focus();
 
@@ -75,8 +94,6 @@ const CodeEditor = ({ sandpack }) => {
     doc.on('op', update);
 
     function update() {
-      // sandpack.updateFiles(query.results);
-      console.log(doc.data.code);
       sandpack.updateFiles({
         ...sandpack.files,
         [doc.data.filename]: {
@@ -86,6 +103,16 @@ const CodeEditor = ({ sandpack }) => {
     }
   };
 
+  const fileOpened = (files) => {
+    return files[openedPath].code;
+  };
+
+  useEffect(() => {
+    // editorRef.current.getModels();
+    console.log(editorRef.current);
+  }, [openedPath]);
+
+
   return (
     <MonacoEditor
       width="800"
@@ -93,7 +120,6 @@ const CodeEditor = ({ sandpack }) => {
       language={fileLanguage(openedPath)}
       theme="vs-dark"
       value={fileOpened(files)}
-      options={options}
       onChange={onChange}
       editorDidMount={editorDidMount}
     />
