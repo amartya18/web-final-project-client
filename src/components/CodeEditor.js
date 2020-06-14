@@ -7,9 +7,10 @@ import sharedb from 'sharedb/lib/client';
 const socket = new ReconnectingWebSocket('ws://localhost:9001');
 const connection = new sharedb.Connection(socket);
 
-const CodeEditor = ({ sandpack }) => {
+const CodeEditor = ({ sandpack,project_id }) => {
   // not sure if this is how to do it properly
   const { files, openedPath } = sandpack;
+  // const [projectId,setProjectId]=useState(project_id);
   const editorRef = useRef();
 
   // read more about react states
@@ -34,7 +35,7 @@ const CodeEditor = ({ sandpack }) => {
     const offset = e.changes[0].rangeOffset;
     const length = e.changes[0].rangeLength;
 
-    console.log(e);
+    // console.log(e);
 
     var ops = null;
 
@@ -46,7 +47,7 @@ const CodeEditor = ({ sandpack }) => {
       ops = [{ p: ['code', offset], sd: deleted }];
     }
 
-    const doc = connection.get('project', openedPath);
+    const doc = connection.get(project_id, openedPath);
     doc.fetch(function(err){
       if (err) throw err;
     });
@@ -67,12 +68,20 @@ const CodeEditor = ({ sandpack }) => {
 
   const editorDidMount = (editor, monaco) => {
     editorRef.current = editor;
+    const doc = connection.get(project_id, openedPath);
+    console.log(project_id+"HEREEEE");
+    doc.subscribe();
+    doc.on('load', update);
+    doc.on('op', update);
 
-    // editor.onDidChangeCursorPosition((e) => {
-    //   console.log(e);
-    // });
-    // editor.onDidChangeCursorSelection();
-
+    function update() {
+      sandpack.updateFiles({
+        ...sandpack.files,
+        [doc.data.filename]: {
+          code: doc.data.code,
+        }
+      });
+    }
     editor.focus();
 
 
@@ -83,7 +92,7 @@ const CodeEditor = ({ sandpack }) => {
   };
 
   useEffect(() => {
-    const doc = connection.get('project', openedPath);
+    const doc = connection.get(project_id, openedPath);
     doc.subscribe();
     doc.on('load', update);
     doc.on('op', update);

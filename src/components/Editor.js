@@ -18,6 +18,7 @@ function Editor(props) {
 
   const [files, setFiles] = useState({});
   const [projectEntry,setProjectEntry]=useState(null);
+  const [projectId,setProjectId]= useState(null);
 
   function getFile(content){
     const dic={};
@@ -63,9 +64,12 @@ function Editor(props) {
                 'auth-token': props.token}
     };
     try{
-      const response = await axios(`http://localhost:9000/api/project/read/${props.match.params.id}`, requestOptions);
+      const response = await axios(`http://localhost:9001/getFromShareDB/${props.match.params.id}`, requestOptions);
+      // const response = await axios(`http://localhost:9000/api/project/read/${props.match.params.id}`, requestOptions);
       projectEntryList(response.data.projectType);
+      setProjectId(props.match.params.id);
       getFile(response.data.source);
+
     }catch(err){  
       if (err.response.status==401){
         props.history.push('/')
@@ -117,7 +121,7 @@ fetchData();
             </div>
             <SandpackConsumer>
               {sandpack => {
-                return <CodeEditor sandpack={sandpack} style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"both"}} />
+                return <CodeEditor project_id ={projectId} sandpack={sandpack} style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"both"}} />
               }}
             </SandpackConsumer>
             <BrowserPreview style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"horizontal",width:"unset", minWidth:"180px"}} />
