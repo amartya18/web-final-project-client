@@ -29,21 +29,24 @@ const CodeEditor = ({ sandpack }) => {
   const onChange = (newValue, e) => {
     const pathFile = sandpack.openedPath;
 
-    console.log(e);
-
     // console.log(e.changes[0].range); contains columns and rows
     const newText = e.changes[0].text;
     const offset = e.changes[0].rangeOffset;
+    const length = e.changes[0].rangeLength;
+
+    console.log(e);
 
     var ops = null;
 
-    if (newText !== null) {
+    if (newText !== '') {
       ops = [{ p: ['code', offset], si: newText }];
     } else {
-      ops = [{ p: ['code', offset], sd: '' }];
+      var deleted = files[openedPath].code.substring(offset, offset + length);
+      // ops = [{ p: [pathFile,'code', offset], sd: deleted }];
+      ops = [{ p: ['code', offset], sd: deleted }];
     }
 
-    const doc = connection.get('project', pathFile);
+    const doc = connection.get('project', openedPath);
     doc.fetch(function(err){
       if (err) throw err;
     });
@@ -65,30 +68,22 @@ const CodeEditor = ({ sandpack }) => {
   const editorDidMount = (editor, monaco) => {
     editorRef.current = editor;
 
-    editor.onDidChangeCursorPosition((e) => {
-      // console.log(e);
-    });
+    // editor.onDidChangeCursorPosition((e) => {
+    //   console.log(e);
+    // });
     // editor.onDidChangeCursorSelection();
-
-    monaco.editor.createModel(
-      sandpack.files['/src/components/UserList.js'].code,
-      'javascript',
-      monaco.Uri.parse(`file:///UserList.js`)
-    )
-
-    monaco.editor.createModel(
-      sandpack.files['/src/index.js'].code,
-      'javascript',
-      monaco.Uri.parse(`file:///index.js`)
-    )
-
-    const temp = monaco.editor.getModel('file:///index.js');
-
-    editor.setModel(temp);
 
     editor.focus();
 
-    const doc = connection.get('project', '/src/index.js');
+
+  };
+
+  const fileOpened = (files) => {
+    return files[openedPath].code;
+  };
+
+  useEffect(() => {
+    const doc = connection.get('project', openedPath);
     doc.subscribe();
     doc.on('load', update);
     doc.on('op', update);
@@ -101,15 +96,6 @@ const CodeEditor = ({ sandpack }) => {
         }
       });
     }
-  };
-
-  const fileOpened = (files) => {
-    return files[openedPath].code;
-  };
-
-  useEffect(() => {
-    // editorRef.current.getModels();
-    console.log(editorRef.current);
   }, [openedPath]);
 
 
