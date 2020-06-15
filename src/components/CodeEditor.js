@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
-import ReconnectingWebSocket from 'reconnecting-websocket';
-import sharedb from 'sharedb/lib/client';
+import io from 'socket-io-client';
 
-const socket = new ReconnectingWebSocket('ws://localhost:9001');
-const connection = new sharedb.Connection(socket);
+const socket = io('http://localhost:9001');
 
 const CodeEditor = ({ sandpack,project_id }) => {
   // not sure if this is how to do it properly
   const { files, openedPath } = sandpack;
-  // const [projectId,setProjectId]=useState(project_id);
-  const editorRef = useRef();
+  const id = useRef(`${Date.now()}`);
+  const remote = useRef(false);
 
   // read more about react states
   const languages = {
@@ -27,36 +25,9 @@ const CodeEditor = ({ sandpack,project_id }) => {
     const file = (openedPath.replace('/', '').split('.').pop());
     return languages[file];
   };
+
   const onChange = (newValue, e) => {
     const pathFile = sandpack.openedPath;
-
-    // console.log(e.changes[0].range); contains columns and rows
-    const newText = e.changes[0].text;
-    const offset = e.changes[0].rangeOffset;
-    const length = e.changes[0].rangeLength;
-
-    // console.log(e);
-
-    var ops = null;
-
-    if (newText !== '') {
-      ops = [{ p: ['code', offset], si: newText }];
-    } else {
-      var deleted = files[openedPath].code.substring(offset, offset + length);
-      // ops = [{ p: [pathFile,'code', offset], sd: deleted }];
-      ops = [{ p: ['code', offset], sd: deleted }];
-    }
-
-    const doc = connection.get(project_id, openedPath);
-    doc.fetch(function(err){
-      if (err) throw err;
-    });
-
-    // submit change
-
-    doc.submitOp(ops, function(err) {
-      if (err) throw err;
-    });;
 
     sandpack.updateFiles({
       ...sandpack.files,
@@ -64,49 +35,30 @@ const CodeEditor = ({ sandpack,project_id }) => {
         code: newValue,
       },
     });
-  };
-
-  const editorDidMount = (editor, monaco) => {
-    editorRef.current = editor;
-    const doc = connection.get(project_id, openedPath);
-    console.log(project_id+"HEREEEE");
-    doc.subscribe();
-    doc.on('load', update);
-    doc.on('op', update);
-
-    function update() {
-      sandpack.updateFiles({
-        ...sandpack.files,
-        [doc.data.filename]: {
-          code: doc.data.code,
-        }
-      });
-    }
-    editor.focus();
-
 
   };
+
+  const editorDidMount = (editor, monaco) => {};
 
   const fileOpened = (files) => {
     return files[openedPath].code;
   };
 
   useEffect(() => {
-    const doc = connection.get(project_id, openedPath);
-    doc.subscribe();
-    doc.on('load', update);
-    doc.on('op', update);
-
-    function update() {
-      sandpack.updateFiles({
-        ...sandpack.files,
-        [doc.data.filename]: {
-          code: doc.data.code,
-        }
-      });
-    }
-  }, [openedPath]);
-
+    // fetch DATA and set initial value
+    // fetch() files...
+    socket.on(project_id, (editorId, ops) => {
+      if (id.current !== editorId) {
+        remote.current = true;
+        sandpack.updateFiles({
+          ...sandpack.files,
+          [pathFile]: {
+            code: ops[openedPath].code,
+          }
+        })
+      }
+    });
+  }); // not sure to use [] or not
 
   return (
     <MonacoEditor

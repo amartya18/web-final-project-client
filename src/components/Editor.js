@@ -64,7 +64,7 @@ function Editor(props) {
                 'auth-token': props.token}
     };
     try{
-      const response = await axios(`http://localhost:9001/getFromShareDB/${props.match.params.id}`, requestOptions);
+      const response = await axios(`http://localhost:9000/api/project/${props.match.params.id}`, requestOptions);
       // const response = await axios(`http://localhost:9000/api/project/read/${props.match.params.id}`, requestOptions);
       projectEntryList(response.data.projectType);
       setProjectId(props.match.params.id);
