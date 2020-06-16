@@ -9,6 +9,7 @@ import {
 import "react-smooshpack/dist/styles.css"
 import Navbar from './Navbar'
 import CodeEditor from './CodeEditor';
+import SecondEditor from './SecondEditor';
 import axios from 'axios';
 import FileExplorerHeader from './FileExplorerHeader'
 
@@ -61,25 +62,30 @@ function Editor(props) {
     const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 
-                'auth-token': props.token}
+                'auth-token': props.token,
+                'Accept': 'application/json',
+              }
     };
     try{
-      const response = await axios(`http://localhost:9000/api/project/${props.match.params.id}`, requestOptions);
-      // const response = await axios(`http://localhost:9000/api/project/read/${props.match.params.id}`, requestOptions);
-      projectEntryList(response.data.projectType);
+      const response = await fetch(`http://localhost:9000/api/project/read/${props.match.params.id}`, requestOptions);
+      const json = await response.json();
       setProjectId(props.match.params.id);
-      getFile(response.data.source);
+      console.log(json);
+      // const response = await axios(`http://localhost:9000/api/project/read/${props.match.params.id}`, requestOptions);
+      projectEntryList(json.projectType);
+      getFile(json.source);
 
     }catch(err){  
-      if (err.response.status==401){
-        props.history.push('/')
-      }else if (err.response.status==403){
-        props.handleLogOut('/');
-        props.history.push('/login');
-      }
-    else{
-      props.history.push('/');
-    }
+      console.log(err);
+      // if (err.response.status==401){
+      //   props.history.push('/')
+      // }else if (err.response.status==403){
+      //   props.handleLogOut('/');
+      //   props.history.push('/login');
+      // }
+    // else{
+    //   props.history.push('/');
+    // }
   }
 }
   useEffect(()=>{
@@ -121,9 +127,11 @@ fetchData();
             </div>
             <SandpackConsumer>
               {sandpack => {
+                // return <SecondEditor project_id={projectId} openedFile={sandpack.openedPath} />
                 return <CodeEditor project_id ={projectId} sandpack={sandpack} style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"both"}} />
               }}
             </SandpackConsumer>
+            {/* <CodeMirror style={{ flex: 1 }} /> */}
             <BrowserPreview style={{ flex: 1, border: "1px solid black", overflowX: "hidden", resize:"horizontal",width:"unset", minWidth:"180px"}} />
           </div>
       </SandpackProvider>
